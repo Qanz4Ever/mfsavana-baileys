@@ -1074,28 +1074,67 @@ export const makeChatsSocket = (config: SocketConfig) => {
 		)
 	}
 
+	const normalizeContactJid = (jid: string): string => {
+		const clean = (jid || '').trim().replace(/[\s\-\+]/g, '')
+		if (clean.endsWith('@s.whatsapp.net')) {
+			return jidNormalizedUser(clean)
+		}
+		const digits = clean.replace(/\D/g, '')
+		const formatted = digits.startsWith('0') ? '62' + digits.slice(1) : digits
+		return formatted + '@s.whatsapp.net'
+	}
+
 	/**
-	 * Add or Edit Contact
+	 * Add or Edit Contact (Standard Baileys method)
 	 */
 	const addOrEditContact = (jid: string, contact: proto.SyncActionValue.IContactAction) => {
+		const targetJid = normalizeContactJid(jid)
 		return chatModify(
 			{
 				contact
 			},
-			jid
+			targetJid
 		)
 	}
 
 	/**
-	 * Remove Contact
+	 * Save Contact directly (accepts string name or IContactAction)
+	 */
+	const saveContact = (jid: string, contact: string | proto.SyncActionValue.IContactAction) => {
+		const action: proto.SyncActionValue.IContactAction = typeof contact === 'string'
+			? {
+				fullName: contact,
+				firstName: contact.split(' ')[0]
+			}
+			: contact
+		return addOrEditContact(jid, action)
+	}
+
+	/**
+	 * Edit Contact name directly
+	 */
+	const editContact = (jid: string, contact: string | proto.SyncActionValue.IContactAction) => {
+		return saveContact(jid, contact)
+	}
+
+	/**
+	 * Remove Contact (Standard Baileys method)
 	 */
 	const removeContact = (jid: string) => {
+		const targetJid = normalizeContactJid(jid)
 		return chatModify(
 			{
 				contact: null
 			},
-			jid
+			targetJid
 		)
+	}
+
+	/**
+	 * Delete Contact alias
+	 */
+	const deleteContact = (jid: string) => {
+		return removeContact(jid)
 	}
 
 	/**
@@ -1527,7 +1566,10 @@ export const makeChatsSocket = (config: SocketConfig) => {
 		chatModify,
 		cleanDirtyBits,
 		addOrEditContact,
+		saveContact,
+		editContact,
 		removeContact,
+		deleteContact,
 		placeholderResendCache,
 		addLabel,
 		addChatLabel,

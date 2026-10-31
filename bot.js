@@ -1113,6 +1113,237 @@ registerCommand({
 	}
 })
 
+
+registerCommand({
+	name: 'savekontak',
+	aliases: ['svkontak', 'simparkontak'],
+	category: 'Manajemen Kontak',
+	description: 'Menyimpan kontak langsung ke cloud address book WhatsApp bot via App State Sync & mengirim vCard.',
+	usage: '.savekontak <nomor/reply/tag> [nama]',
+	baileysMethods: [
+		'sock.saveContact(jid, nameOrContact)',
+		'sock.sendContact(jid, { fullName, number })',
+		'sock.chatModify({ contact: { fullName } }, jid)'
+	],
+	execute: async (ctx, sock) => {
+		if (!checkPermission(ctx, true)) return
+
+		let targetJid = ''
+		let customName = ''
+
+		if (ctx.quoted && ctx.quoted.sender) {
+			targetJid = ctx.quoted.sender
+			customName = ctx.query ? ctx.query.trim() : ''
+		} else if (ctx.mentionedJid && ctx.mentionedJid.length > 0) {
+			targetJid = ctx.mentionedJid[0]
+			const queryParts = ctx.query ? ctx.query.split(' ').slice(1).join(' ') : ''
+			customName = queryParts.trim()
+		} else if (ctx.query) {
+			const parts = ctx.query.trim().split('|').map(s => s.trim())
+			if (parts.length >= 2) {
+				targetJid = parts[0]
+				customName = parts[1]
+			} else {
+				const spaceParts = ctx.query.trim().split(/\s+/)
+				targetJid = spaceParts[0]
+				customName = spaceParts.slice(1).join(' ')
+			}
+		}
+
+		if (!targetJid) {
+			return ctx.reply(
+				'❌ *Format salah!*\n\n' +
+				'Gunakan salah satu cara:\n' +
+				'1. Reply pesan user: *.savekontak NamaUser*\n' +
+				'2. Tag user: *.savekontak @user NamaUser*\n' +
+				'3. Nomor langsung: *.savekontak 6281234567890 | NamaUser*'
+			)
+		}
+
+		const cleanNum = targetJid.split('@')[0].split(':')[0].replace(/\D/g, '')
+		if (cleanNum.length < 8) {
+			return ctx.reply('❌ Nomor telepon tidak valid.')
+		}
+
+		const finalName = customName || `User_${cleanNum.slice(-4)}`
+		const finalJid = cleanNum + '@s.whatsapp.net'
+
+		try {
+			await sock.saveContact(finalJid, finalName)
+
+			// Kirim kartu vCard konfirmasi
+			await sock.sendContact(ctx.chat, {
+				fullName: finalName,
+				number: cleanNum,
+				org: 'Kontak Tersimpan'
+			}, { quoted: ctx.msg })
+
+			return ctx.reply(
+				'✅ *Kontak Berhasil Disimpan!*\n\n' +
+				`👤 *Nama*: ${finalName}\n` +
+				`📞 *Nomor*: +${cleanNum}\n` +
+				`📇 *JID*: ${finalJid}\n\n` +
+				'_Kontak telah tersinkronisasi langsung ke Cloud Address Book WhatsApp._'
+			)
+		} catch (err) {
+			return ctx.reply(`❌ Gagal menyimpan kontak: ${err.message}`)
+		}
+	}
+})
+
+registerCommand({
+	name: 'editkontak',
+	aliases: ['renamekontak', 'ubahkontak'],
+	category: 'Manajemen Kontak',
+	description: 'Mengubah nama kontak tersimpan langsung di akun WhatsApp bot via App State Sync.',
+	usage: '.editkontak <nomor/reply/tag> <nama_baru>',
+	baileysMethods: [
+		'sock.editContact(jid, newName)',
+		'sock.chatModify({ contact: { fullName } }, jid)'
+	],
+	execute: async (ctx, sock) => {
+		if (!checkPermission(ctx, true)) return
+
+		let targetJid = ''
+		let newName = ''
+
+		if (ctx.quoted && ctx.quoted.sender) {
+			targetJid = ctx.quoted.sender
+			newName = ctx.query ? ctx.query.trim() : ''
+		} else if (ctx.mentionedJid && ctx.mentionedJid.length > 0) {
+			targetJid = ctx.mentionedJid[0]
+			const queryParts = ctx.query ? ctx.query.split(' ').slice(1).join(' ') : ''
+			newName = queryParts.trim()
+		} else if (ctx.query) {
+			const parts = ctx.query.trim().split('|').map(s => s.trim())
+			if (parts.length >= 2) {
+				targetJid = parts[0]
+				newName = parts[1]
+			} else {
+				const spaceParts = ctx.query.trim().split(/\s+/)
+				targetJid = spaceParts[0]
+				newName = spaceParts.slice(1).join(' ')
+			}
+		}
+
+		if (!targetJid || !newName) {
+			return ctx.reply('❌ Format: *.editkontak <nomor/reply/tag> <nama_baru>*\nContoh: *.editkontak 6281234567890 | Budi Baru*')
+		}
+
+		const cleanNum = targetJid.split('@')[0].split(':')[0].replace(/\D/g, '')
+		const finalJid = cleanNum + '@s.whatsapp.net'
+
+		try {
+			await sock.editContact(finalJid, newName)
+			return ctx.reply(
+				'✅ *Kontak Berhasil Diubah!*\n\n' +
+				`👤 *Nama Baru*: ${newName}\n` +
+				`📞 *Nomor*: +${cleanNum}\n` +
+				'_Pembaruan nama telah tersinkronisasi ke cloud WhatsApp._'
+			)
+		} catch (err) {
+			return ctx.reply(`❌ Gagal mengubah kontak: ${err.message}`)
+		}
+	}
+})
+
+registerCommand({
+	name: 'hapuskontak',
+	aliases: ['delkontak', 'deletecontact'],
+	category: 'Manajemen Kontak',
+	description: 'Menghapus kontak tersimpan dari cloud address book WhatsApp bot via App State Sync (OP.REMOVE).',
+	usage: '.hapuskontak <nomor/reply/tag>',
+	baileysMethods: [
+		'sock.deleteContact(jid)',
+		'sock.removeContact(jid)',
+		'sock.chatModify({ contact: null }, jid)'
+	],
+	execute: async (ctx, sock) => {
+		if (!checkPermission(ctx, true)) return
+
+		let targetJid = ''
+
+		if (ctx.quoted && ctx.quoted.sender) {
+			targetJid = ctx.quoted.sender
+		} else if (ctx.mentionedJid && ctx.mentionedJid.length > 0) {
+			targetJid = ctx.mentionedJid[0]
+		} else if (ctx.query) {
+			targetJid = ctx.query.trim().split(' ')[0]
+		}
+
+		if (!targetJid) {
+			return ctx.reply('❌ Format: *.hapuskontak <nomor/reply/tag>*\nContoh: *.hapuskontak 6281234567890*')
+		}
+
+		const cleanNum = targetJid.split('@')[0].split(':')[0].replace(/\D/g, '')
+		const finalJid = cleanNum + '@s.whatsapp.net'
+
+		try {
+			await sock.deleteContact(finalJid)
+			return ctx.reply(
+				'🗑️ *Kontak Berhasil Dihapus!*\n\n' +
+				`📞 *Nomor*: +${cleanNum}\n` +
+				'_Kontak telah dihapus dari cloud address book akun WhatsApp bot._'
+			)
+		} catch (err) {
+			return ctx.reply(`❌ Gagal menghapus kontak: ${err.message}`)
+		}
+	}
+})
+
+registerCommand({
+	name: 'savekontakgrup',
+	aliases: ['svgrup', 'savekontakall', 'vcfkontak'],
+	category: 'Manajemen Kontak',
+	description: 'Mengekstrak seluruh anggota grup ke berkas dokumen VCF (.vcf) dan kartu kontak agar bisa langsung disimpan ke HP.',
+	usage: '.savekontakgrup [nama_base]',
+	baileysMethods: [
+		'sock.exportGroupContactsVCF(groupId, baseName)',
+		'sock.sendMessage(jid, { document: vcfBuffer, mimetype: "text/vcard" })',
+		'sock.sendMessage(jid, { contacts: { displayName, contacts } })'
+	],
+	execute: async (ctx, sock) => {
+		if (!checkPermission(ctx, true)) return
+		if (!ctx.isGroup) {
+			return ctx.reply('❌ Command ini hanya dapat digunakan di dalam grup WhatsApp!')
+		}
+
+		const baseName = ctx.query ? ctx.query.trim() : 'Member'
+		await ctx.reply('⏳ Sedang mengekstrak seluruh kontak anggota grup...')
+
+		try {
+			const res = await sock.exportGroupContactsVCF(ctx.chat, baseName)
+			if (res.count === 0) {
+				return ctx.reply('❌ Tidak ada kontak anggota yang dapat diekstrak.')
+			}
+
+			// 1. Kirim file dokumen .vcf
+			await sock.sendMessage(ctx.chat, {
+				document: res.vcfBuffer,
+				fileName: res.fileName,
+				mimetype: 'text/vcard',
+				caption:
+					'📇 *EKSTRAKSI KONTAK GRUP SELESAI*\n\n' +
+					`👥 *Grup*: ${res.groupSubject}\n` +
+					`📊 *Total Kontak*: ${res.count} anggota\n` +
+					`📁 *Berkas*: ${res.fileName}\n\n` +
+					'_Unduh berkas dokumen di atas dan buka di HP untuk menyimpan seluruh kontak grup ke buku telepon sekaligus._'
+			}, { quoted: ctx.msg })
+
+			// 2. Kirim kartu kontak multi-vCard WhatsApp
+			await sock.sendMessage(ctx.chat, {
+				contacts: {
+					displayName: `${res.count} Kontak ${res.groupSubject}`,
+					contacts: res.contactsList.slice(0, 50)
+				}
+			}, { quoted: ctx.msg })
+
+		} catch (err) {
+			return ctx.reply(`❌ Gagal mengekstrak kontak grup: ${err.message}`)
+		}
+	}
+})
+
 registerCommand({
 	name: 'vcard',
 	aliases: ['kontak', 'contact'],

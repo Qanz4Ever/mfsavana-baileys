@@ -808,3 +808,66 @@ Karena `ctx` dan `msg` sudah mengisolasi data pesan pengguna tersebut. Jika kamu
 ---
 
 *Dokumentasi ini disusun khusus untuk ekosistem **mfsavana-baileys** v1.0.0. Selamat berkreasi membangun bot WhatsApp terbaik!*
+
+---
+
+## 13. Manajemen Kontak & Sinkronisasi Cloud (Cloud & VCF)
+
+MFSAVANA Baileys menyediakan metode tingkat tinggi untuk menyimpan, mengubah (edit), dan menghapus kontak secara langsung pada WhatsApp Cloud Address Book (App State Sync), serta fitur ekstraksi kontak grup ke format vCard / berkas VCF.
+
+### 13.1 Simpan & Edit Kontak Langsung
+Simpan atau perbarui nama kontak agar tersinkronisasi di akun WhatsApp bot dan seluruh perangkat tertaut:
+```typescript
+// Simpan dengan nama string langsung
+await sock.saveContact('6281234567890@s.whatsapp.net', 'Budi Santoso')
+
+// Ubah (edit) nama kontak yang sudah ada
+await sock.editContact('6281234567890@s.whatsapp.net', 'Budi Santoso (Pelanggan VIP)')
+
+// Atau gunakan objek IContactAction detail
+await sock.saveContact('6281234567890@s.whatsapp.net', {
+    fullName: 'Budi Santoso',
+    firstName: 'Budi',
+    saveOnPrimaryAddressbook: true
+})
+```
+
+### 13.2 Hapus Kontak
+Hapus kontak dari buku alamat cloud WhatsApp:
+```typescript
+await sock.deleteContact('6281234567890@s.whatsapp.net')
+```
+
+### 13.3 Mengirim Kartu Kontak vCard
+Kirim kartu kontak interaktif WhatsApp (tunggal atau banyak sekaligus):
+```typescript
+await sock.sendContact('6281234567890@s.whatsapp.net', {
+    fullName: 'Customer Support',
+    number: '628999999999',
+    org: 'MFSAVANA Tech'
+})
+```
+
+### 13.4 Ekstraksi Kontak Grup (VCF Ekspor)
+Ekstrak seluruh nomor anggota grup (otomatis mengabaikan bot) menjadi berkas dokumen `.vcf` yang bisa langsung diimpor ke buku telepon HP pengguna:
+```typescript
+const { count, groupSubject, vcfBuffer, fileName, contactsList } = await sock.exportGroupContactsVCF(groupId, 'Member')
+
+// Kirim dokumen .vcf untuk disimpan sekali klik di HP
+await sock.sendMessage(groupId, {
+    document: vcfBuffer,
+    fileName,
+    mimetype: 'text/vcard',
+    caption: `Berhasil mengekstrak ${count} kontak dari grup ${groupSubject}`
+})
+```
+
+### 13.5 Namespace Helper (`sock.contact`)
+Semua method kontak di atas juga dapat diakses rapi melalui namespace `sock.contact`:
+```typescript
+await sock.contact.save(jid, 'Nama')
+await sock.contact.edit(jid, 'Nama Baru')
+await sock.contact.delete(jid)
+await sock.contact.send(targetJid, contactInfo)
+await sock.contact.exportGroupVCF(groupId, 'Member')
+```

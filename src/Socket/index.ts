@@ -832,6 +832,108 @@ const makeWASocket = (config: UserFacingSocketConfig) => {
 		}
 	}
 
+	/**
+	 * Generates a valid standard vCard 3.0 string
+	 */
+	const createVCard = (info: { fullName: string; number: string; org?: string }) => {
+		const cleanNumber = (info.number || '').replace(/\D/g, '')
+		return [
+			'BEGIN:VCARD',
+			'VERSION:3.0',
+			`FN:${info.fullName}`,
+			`ORG:${info.org || ''};`,
+			`TEL;type=CELL;type=VOICE;waid=${cleanNumber}:+${cleanNumber}`,
+			'END:VCARD'
+		].join('\n')
+	}
+
+	/**
+	 * Helper to send single or multiple vCard contacts directly
+	 */
+	const sendContact = async (
+		targetJid: string,
+		contact: { fullName: string; number: string; org?: string } | Array<{ fullName: string; number: string; org?: string }>,
+		options: any = {}
+	) => {
+		const contactsList = Array.isArray(contact) ? contact : [contact]
+		const vcards = contactsList.map(c => ({ vcard: createVCard(c) }))
+		const first = contactsList[0]
+		const displayName = contactsList.length === 1 ? (first ? first.fullName : 'Contact') : `${contactsList.length} Contacts`
+		return (sock as any).sendMessage(
+			targetJid,
+			{
+				contacts: {
+					displayName,
+					contacts: vcards
+				}
+			},
+			options
+		)
+	}
+
+	/**
+	 * Extract group participants into a downloadable VCF buffer and contact list
+	 */
+	const exportGroupContactsVCF = async (groupId: string, baseName = 'User') => {
+		const meta = await (sock as any).groupMetadata(groupId)
+		const participants = meta?.participants || []
+		const userRawId = sock.user?.id || ''
+		const botPart = userRawId.split(':')[0] || ''
+		const botNumber = botPart.replace(/\D/g, '')
+
+		let vcards = ''
+		let count = 0
+		const contactsList: Array<{ vcard: string }> = []
+
+		for (const p of participants) {
+			const idStr = p.id || ''
+			const atSplit = idStr.split('@')[0] || ''
+			const num = (atSplit.split(':')[0] || '').replace(/\D/g, '')
+			if (!num || num === botNumber) continue
+			count++
+			const contactName = `${baseName} ${count}`
+			const vcard = createVCard({ fullName: contactName, number: num, org: meta?.subject || 'Group Contact' })
+			vcards += vcard + '\n'
+			contactsList.push({ vcard })
+		}
+
+		return {
+			count,
+			groupSubject: meta?.subject || '',
+			vcfBuffer: Buffer.from(vcards, 'utf8'),
+			fileName: `${baseName}_${count}_Contacts.vcf`,
+			contactsList
+		}
+	}
+
+	/**
+	 * Comprehensive contact utilities namespace for managing WhatsApp Cloud contacts,
+	 * vCard generation, and group contact extractions.
+	 */
+	const contactUtils = (contactJid?: string) => {
+		const targetJid = contactJid || ''
+		return {
+			target: targetJid,
+			save: async (nameOrAction: string | proto.SyncActionValue.IContactAction, customJid?: string) => {
+				return (sock as any).saveContact(customJid || targetJid, nameOrAction)
+			},
+			edit: async (nameOrAction: string | proto.SyncActionValue.IContactAction, customJid?: string) => {
+				return (sock as any).editContact(customJid || targetJid, nameOrAction)
+			},
+			delete: async (customJid?: string) => {
+				return (sock as any).deleteContact(customJid || targetJid)
+			},
+			createVCard,
+			send: async (contact: any, options?: any, customJid?: string) => {
+				return sendContact(customJid || targetJid, contact, options)
+			},
+			exportGroupVCF: async (groupId?: string, baseName?: string) => {
+				return exportGroupContactsVCF(groupId || targetJid, baseName)
+			}
+		}
+	}
+
+
 	const finalSock = {
 		...sock,
 		config: newConfig,
@@ -878,7 +980,16 @@ const makeWASocket = (config: UserFacingSocketConfig) => {
 		inspectPhoneNumber: (target: string, options?: InspectPhoneOptions) => inspectPhoneNumber(sock, target, options),
 		// Management Utility Namespaces
 		profileUtils,
-		groupUtils
+		groupUtils,
+		// Contact Management & VCF API
+		saveContact: (sock as any).saveContact,
+		editContact: (sock as any).editContact,
+		deleteContact: (sock as any).deleteContact,
+		createVCard,
+		sendContact,
+		exportGroupContactsVCF,
+		contactUtils,
+		contact: contactUtils()
 	}
 
 	return finalSock

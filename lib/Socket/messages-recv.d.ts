@@ -174,7 +174,10 @@ export declare const makeMessagesRecvSocket: (config: SocketConfig) => {
     chatModify: (mod: import("../Types/index.js").ChatModification, jid: string) => Promise<void>;
     cleanDirtyBits: (type: "account_sync" | "groups", fromTimestamp?: number | string) => Promise<void>;
     addOrEditContact: (jid: string, contact: proto.SyncActionValue.IContactAction) => Promise<void>;
+    saveContact: (jid: string, contact: string | proto.SyncActionValue.IContactAction) => Promise<void>;
+    editContact: (jid: string, contact: string | proto.SyncActionValue.IContactAction) => Promise<void>;
     removeContact: (jid: string) => Promise<void>;
+    deleteContact: (jid: string) => Promise<void>;
     placeholderResendCache: import("../Types/index.js").CacheStore;
     addLabel: (jid: string, labels: import("../Types/Label.js").LabelActionBody) => Promise<void>;
     addChatLabel: (jid: string, labelId: string) => Promise<void>;

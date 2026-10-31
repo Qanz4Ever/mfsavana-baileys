@@ -65,7 +65,10 @@ export declare const makeChatsSocket: (config: SocketConfig) => {
     chatModify: (mod: ChatModification, jid: string) => Promise<void>;
     cleanDirtyBits: (type: "account_sync" | "groups", fromTimestamp?: number | string) => Promise<void>;
     addOrEditContact: (jid: string, contact: proto.SyncActionValue.IContactAction) => Promise<void>;
+    saveContact: (jid: string, contact: string | proto.SyncActionValue.IContactAction) => Promise<void>;
+    editContact: (jid: string, contact: string | proto.SyncActionValue.IContactAction) => Promise<void>;
     removeContact: (jid: string) => Promise<void>;
+    deleteContact: (jid: string) => Promise<void>;
     placeholderResendCache: CacheStore;
     addLabel: (jid: string, labels: LabelActionBody) => Promise<void>;
     addChatLabel: (jid: string, labelId: string) => Promise<void>;

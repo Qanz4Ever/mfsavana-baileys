@@ -136,6 +136,74 @@ declare const makeWASocket: (config: UserFacingSocketConfig) => {
         getInviteInfo: (code: string) => Promise<any>;
         fetchAll: () => Promise<any>;
     };
+    saveContact: any;
+    editContact: any;
+    deleteContact: any;
+    createVCard: (info: {
+        fullName: string;
+        number: string;
+        org?: string;
+    }) => string;
+    sendContact: (targetJid: string, contact: {
+        fullName: string;
+        number: string;
+        org?: string;
+    } | Array<{
+        fullName: string;
+        number: string;
+        org?: string;
+    }>, options?: any) => Promise<any>;
+    exportGroupContactsVCF: (groupId: string, baseName?: string) => Promise<{
+        count: number;
+        groupSubject: any;
+        vcfBuffer: Buffer<ArrayBuffer>;
+        fileName: string;
+        contactsList: {
+            vcard: string;
+        }[];
+    }>;
+    contactUtils: (contactJid?: string) => {
+        target: string;
+        save: (nameOrAction: string | proto.SyncActionValue.IContactAction, customJid?: string) => Promise<any>;
+        edit: (nameOrAction: string | proto.SyncActionValue.IContactAction, customJid?: string) => Promise<any>;
+        delete: (customJid?: string) => Promise<any>;
+        createVCard: (info: {
+            fullName: string;
+            number: string;
+            org?: string;
+        }) => string;
+        send: (contact: any, options?: any, customJid?: string) => Promise<any>;
+        exportGroupVCF: (groupId?: string, baseName?: string) => Promise<{
+            count: number;
+            groupSubject: any;
+            vcfBuffer: Buffer<ArrayBuffer>;
+            fileName: string;
+            contactsList: {
+                vcard: string;
+            }[];
+        }>;
+    };
+    contact: {
+        target: string;
+        save: (nameOrAction: string | proto.SyncActionValue.IContactAction, customJid?: string) => Promise<any>;
+        edit: (nameOrAction: string | proto.SyncActionValue.IContactAction, customJid?: string) => Promise<any>;
+        delete: (customJid?: string) => Promise<any>;
+        createVCard: (info: {
+            fullName: string;
+            number: string;
+            org?: string;
+        }) => string;
+        send: (contact: any, options?: any, customJid?: string) => Promise<any>;
+        exportGroupVCF: (groupId?: string, baseName?: string) => Promise<{
+            count: number;
+            groupSubject: any;
+            vcfBuffer: Buffer<ArrayBuffer>;
+            fileName: string;
+            contactsList: {
+                vcard: string;
+            }[];
+        }>;
+    };
     communityMetadata: (jid: string) => Promise<import("../index.js").GroupMetadata>;
     communityCreate: (subject: string, body: string) => Promise<import("../index.js").GroupMetadata | null>;
     communityCreateGroup: (subject: string, participants: string[], parentCommunityJid: string) => Promise<import("../index.js").GroupMetadata | null>;
@@ -248,10 +316,6 @@ declare const makeWASocket: (config: UserFacingSocketConfig) => {
         messageSecret?: Buffer | Uint8Array;
         mentions?: string[];
     } | string, valuesOrOptions?: string[] | import("../index.js").MiscMessageGenerationOptions, selectableCountOrOptions?: number | import("../index.js").MiscMessageGenerationOptions, options?: import("../index.js").MiscMessageGenerationOptions) => Promise<any>;
-    sendContact: (this: any, chat: string, contact: {
-        name: string;
-        number: string;
-    }, options?: import("../index.js").MiscMessageGenerationOptions) => Promise<any>;
     sendAlbum: (this: any, chat: string, medias: import("../index.js").AlbumMediaItem[], options?: import("../index.js").MiscMessageGenerationOptions & {
         caption?: string;
         delayMs?: number;

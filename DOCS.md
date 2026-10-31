@@ -379,3 +379,66 @@ pm2 logs mfsavana-baileys-prod
 1. **Single Instance**: Never run multiple cluster instances against the same `./session` folder. WhatsApp permits only one active WebSocket connection per session.
 2. **Environment Isolation**: Always set `NODE_ENV=production` and `LOG_LEVEL=silent` in your `.env` file.
 3. **Session Backup**: Periodically back up your `./session` folder while the bot process is stopped.
+
+---
+
+## 13. Contact Management & Cloud Address Book Sync
+
+MFSAVANA Baileys provides first-class methods to save, edit, and delete contacts directly on the WhatsApp Cloud Address Book (App State Sync) and tools to generate and extract group contacts as vCard / VCF files.
+
+### 13.1 Save & Edit Contacts Directly
+Save or update a contact so it appears in WhatsApp Web and connected devices:
+```typescript
+// Save by string name (auto-splits firstName and fullName)
+await sock.saveContact('6281234567890@s.whatsapp.net', 'Budi Santoso')
+
+// Edit an existing contact's name
+await sock.editContact('6281234567890@s.whatsapp.net', 'Budi Santoso (VIP Client)')
+
+// Or pass detailed IContactAction object
+await sock.saveContact('6281234567890@s.whatsapp.net', {
+    fullName: 'Budi Santoso',
+    firstName: 'Budi',
+    saveOnPrimaryAddressbook: true
+})
+```
+
+### 13.2 Delete Contacts
+Remove a contact from WhatsApp Cloud address book:
+```typescript
+await sock.deleteContact('6281234567890@s.whatsapp.net')
+```
+
+### 13.3 Send vCard Contact Cards
+Send single or multiple WhatsApp contact cards:
+```typescript
+await sock.sendContact('6281234567890@s.whatsapp.net', {
+    fullName: 'Customer Support',
+    number: '628999999999',
+    org: 'MFSAVANA Tech'
+})
+```
+
+### 13.4 Group Contact Extraction (VCF)
+Extract all group participants (excluding bot) into a downloadable `.vcf` file:
+```typescript
+const { count, groupSubject, vcfBuffer, fileName, contactsList } = await sock.exportGroupContactsVCF(groupId, 'Client')
+
+// Send .vcf document for instant phone import
+await sock.sendMessage(groupId, {
+    document: vcfBuffer,
+    fileName,
+    mimetype: 'text/vcard',
+    caption: `Extracted ${count} contacts from ${groupSubject}`
+})
+```
+
+### 13.5 Namespace Helper (`sock.contact`)
+All methods are also available under the `sock.contact` namespace:
+```typescript
+await sock.contact.save(jid, 'Nama')
+await sock.contact.edit(jid, 'Nama Baru')
+await sock.contact.delete(jid)
+await sock.contact.send(targetJid, contactInfo)
+await sock.contact.exportGroupVCF(groupId, 'Member')
+```
