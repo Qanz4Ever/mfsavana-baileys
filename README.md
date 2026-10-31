@@ -8,6 +8,8 @@
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node.js-≥20.0.0-339933?logo=node.js&logoColor=white" alt="Node.js Version" /></a>
   <a href="https://github.com/WhiskeySockets/Baileys"><img src="https://img.shields.io/badge/Base-Baileys%20v7.0.0--rc14-25D366?logo=whatsapp&logoColor=white" alt="Base Engine" /></a>
   <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://www.npmjs.com/package/mfsavana-baileys"><img src="https://img.shields.io/npm/v/mfsavana-baileys.svg?color=cb3837&logo=npm" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/package/mfsavana-baileys"><img src="https://img.shields.io/npm/dm/mfsavana-baileys.svg?color=blue" alt="NPM Downloads" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPL_v3-blue.svg" alt="License" /></a>
   <a href="README_ID.md"><img src="https://img.shields.io/badge/Bahasa%20Indonesia-README_ID.md-orange" alt="Indonesian Docs" /></a>
 </p>
