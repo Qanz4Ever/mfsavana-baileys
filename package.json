@@ -22,8 +22,7 @@
     "DOCS.md",
     "DOCS_ID.md",
     "PANDUAN_TESTING_BOT.md",
-    "PRODUCTION.md",
-    "ecosystem.config.cjs"
+    "PRODUCTION.md"
   ],
   "scripts": {
     "build:all": "npm run build && npm run build:docs",
@@ -157,10 +156,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Qanz4Ever/mfsavana-baileys.git"
+    "url": "git+https://github.com/Qanz4Ever/mfsavana-baileys-development.git"
   },
-  "homepage": "https://github.com/Qanz4Ever/mfsavana-baileys#readme",
+  "homepage": "https://github.com/Qanz4Ever/mfsavana-baileys-development#readme",
   "bugs": {
-    "url": "https://github.com/Qanz4Ever/mfsavana-baileys/issues"
+    "url": "https://github.com/Qanz4Ever/mfsavana-baileys-development/issues"
   }
 }

@@ -1,4 +1,4 @@
-# Dokumentasi Resmi & Panduan Komprehensif MFSAVANA Baileys (v1.0.0)
+# Dokumentasi Resmi & Panduan Komprehensif MFSAVANA Baileys (v1.0.1)
 
 > **Base Engine**: @whiskeysockets/baileys v7.0.0-rc14 • **WhatsApp Web Protocol**: 2.3000.1043857760
 
@@ -31,6 +31,7 @@ Dilengkapi arsitektur **Self-Healing Enkripsi (Anti Bad MAC)**, **Inspeksi Nomor
 - [18. Fitur Album Messages (Pengiriman Multi-Media Bersatu)](#18-fitur-album-messages-pengiriman-multi-media-bersatu)
 - [19. Newsletter & WhatsApp Channel API (Lengkap)](#19-newsletter--whatsapp-channel-api-lengkap)
 - [20. Panduan Pemecahan Masalah (Troubleshooting & FAQ Pemula)](#20-panduan-pemecahan-masalah-troubleshooting--faq-pemula)
+- [21. Manajemen Kontak & Sinkronisasi Cloud (Cloud & VCF)](#21-manajemen-kontak--sinkronisasi-cloud-cloud--vcf)
 
 ---
 
@@ -807,15 +808,15 @@ Karena `ctx` dan `msg` sudah mengisolasi data pesan pengguna tersebut. Jika kamu
 
 ---
 
-*Dokumentasi ini disusun khusus untuk ekosistem **mfsavana-baileys** v1.0.0. Selamat berkreasi membangun bot WhatsApp terbaik!*
+*Dokumentasi ini disusun khusus untuk ekosistem **mfsavana-baileys** v1.0.1. Selamat berkreasi membangun bot WhatsApp terbaik!*
 
 ---
 
-## 13. Manajemen Kontak & Sinkronisasi Cloud (Cloud & VCF)
+## 21. Manajemen Kontak & Sinkronisasi Cloud (Cloud & VCF)
 
 MFSAVANA Baileys menyediakan metode tingkat tinggi untuk menyimpan, mengubah (edit), dan menghapus kontak secara langsung pada WhatsApp Cloud Address Book (App State Sync), serta fitur ekstraksi kontak grup ke format vCard / berkas VCF.
 
-### 13.1 Simpan & Edit Kontak Langsung
+### 21.1 Simpan & Edit Kontak Langsung
 Simpan atau perbarui nama kontak agar tersinkronisasi di akun WhatsApp bot dan seluruh perangkat tertaut:
 ```typescript
 // Simpan dengan nama string langsung
@@ -832,13 +833,13 @@ await sock.saveContact('6281234567890@s.whatsapp.net', {
 })
 ```
 
-### 13.2 Hapus Kontak
+### 21.2 Hapus Kontak
 Hapus kontak dari buku alamat cloud WhatsApp:
 ```typescript
 await sock.deleteContact('6281234567890@s.whatsapp.net')
 ```
 
-### 13.3 Mengirim Kartu Kontak vCard
+### 21.3 Mengirim Kartu Kontak vCard
 Kirim kartu kontak interaktif WhatsApp (tunggal atau banyak sekaligus):
 ```typescript
 await sock.sendContact('6281234567890@s.whatsapp.net', {
@@ -848,7 +849,7 @@ await sock.sendContact('6281234567890@s.whatsapp.net', {
 })
 ```
 
-### 13.4 Ekstraksi Kontak Grup (VCF Ekspor)
+### 21.4 Ekstraksi Kontak Grup (VCF Ekspor)
 Ekstrak seluruh nomor anggota grup (otomatis mengabaikan bot) menjadi berkas dokumen `.vcf` yang bisa langsung diimpor ke buku telepon HP pengguna:
 ```typescript
 const { count, groupSubject, vcfBuffer, fileName, contactsList } = await sock.exportGroupContactsVCF(groupId, 'Member')
@@ -862,7 +863,7 @@ await sock.sendMessage(groupId, {
 })
 ```
 
-### 13.5 Namespace Helper (`sock.contact`)
+### 21.5 Namespace Helper (`sock.contact`)
 Semua method kontak di atas juga dapat diakses rapi melalui namespace `sock.contact`:
 ```typescript
 await sock.contact.save(jid, 'Nama')

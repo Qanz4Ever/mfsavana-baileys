@@ -832,6 +832,8 @@ const makeWASocket = (config: UserFacingSocketConfig) => {
 		}
 	}
 
+	let sockRef: any = null
+
 	/**
 	 * Generates a valid standard vCard 3.0 string
 	 */
@@ -859,7 +861,8 @@ const makeWASocket = (config: UserFacingSocketConfig) => {
 		const vcards = contactsList.map(c => ({ vcard: createVCard(c) }))
 		const first = contactsList[0]
 		const displayName = contactsList.length === 1 ? (first ? first.fullName : 'Contact') : `${contactsList.length} Contacts`
-		return (sock as any).sendMessage(
+		const sendFn = sockRef?.sendMessage || (sock as any).sendMessage
+		return sendFn(
 			targetJid,
 			{
 				contacts: {
@@ -875,7 +878,8 @@ const makeWASocket = (config: UserFacingSocketConfig) => {
 	 * Extract group participants into a downloadable VCF buffer and contact list
 	 */
 	const exportGroupContactsVCF = async (groupId: string, baseName = 'User') => {
-		const meta = await (sock as any).groupMetadata(groupId)
+		const getMetaFn = sockRef?.groupMetadata || (sock as any).groupMetadata
+		const meta = await getMetaFn(groupId)
 		const participants = meta?.participants || []
 		const userRawId = sock.user?.id || ''
 		const botPart = userRawId.split(':')[0] || ''
@@ -992,6 +996,7 @@ const makeWASocket = (config: UserFacingSocketConfig) => {
 		contact: contactUtils()
 	}
 
+	sockRef = finalSock
 	return finalSock
 }
 

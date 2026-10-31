@@ -1,4 +1,4 @@
-# MFSAVANA Baileys (v1.0.0)
+# MFSAVANA Baileys (v1.0.1)
 
 <p align="center">
   <b>Engine WhatsApp Web API Node.js yang Tangguh, Siap Produksi, dan Berfitur Lengkap</b>
@@ -111,7 +111,7 @@ Tambahkan `mfsavana-baileys` secara langsung ke dalam `dependencies` di file `pa
   }
 }
 ```
-> **Tips:** Penggunaan nilai `"latest"` memastikan bot Anda selalu mendapatkan pembaruan otomatis perbaikan protokol WhatsApp Web dan patch keamanan terkini. Anda juga dapat mengunci versi tertentu dengan `"^1.0.0"`.
+> **Tips:** Penggunaan nilai `"latest"` memastikan bot Anda selalu mendapatkan pembaruan otomatis perbaikan protokol WhatsApp Web dan patch keamanan terkini. Anda juga dapat mengunci versi tertentu dengan `"^1.0.1"`.
 
 Setelah menyimpan berkas `package.json`, jalankan perintah pemasangan:
 ```bash

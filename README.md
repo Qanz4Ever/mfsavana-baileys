@@ -1,4 +1,4 @@
-# MFSAVANA Baileys (v1.0.0)
+# MFSAVANA Baileys (v1.0.1)
 
 <p align="center">
   <b>Production-Ready, Resilient, and Full-Featured WhatsApp Web API Engine for Node.js</b>
@@ -111,7 +111,7 @@ Add `mfsavana-baileys` directly to your bot's `package.json` dependencies:
   }
 }
 ```
-> **Tip:** Setting `"latest"` ensures your bot always retrieves the latest WhatsApp Web binary protocol fixes and security patches. Alternatively, lock to a specific minor release using `"^1.0.0"`.
+> **Tip:** Setting `"latest"` ensures your bot always retrieves the latest WhatsApp Web binary protocol fixes and security patches. Alternatively, lock to a specific minor release using `"^1.0.1"`.
 
 After saving your `package.json`, run:
 ```bash

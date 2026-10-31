@@ -18,7 +18,8 @@ State-of-the-art WhatsApp Web API engine for Node.js built on top of Baileys (`@
 - [9. Smart Realtime Event Listeners](#9-smart-realtime-event-listeners)
 - [10. Group Administration & Whitelisting](#10-group-administration--whitelisting)
 - [11. Deep Phone Number Inspector](#11-deep-phone-number-inspector)
-- [12. Production Deployment & Troubleshooting](#12-production-deployment--troubleshooting)
+- [12. Contact Management & Cloud Address Book Sync](#12-contact-management--cloud-address-book-sync)
+- [13. Production Deployment & Troubleshooting](#13-production-deployment--troubleshooting)
 
 ---
 
@@ -366,27 +367,11 @@ console.log('Bio / About:', result.about)
 
 ---
 
-## 12. Production Deployment & Troubleshooting
-
-### Deployment via PM2
-```bash
-npm install -g pm2
-pm2 start ecosystem.config.cjs
-pm2 logs mfsavana-baileys-prod
-```
-
-### Critical Rules for Production
-1. **Single Instance**: Never run multiple cluster instances against the same `./session` folder. WhatsApp permits only one active WebSocket connection per session.
-2. **Environment Isolation**: Always set `NODE_ENV=production` and `LOG_LEVEL=silent` in your `.env` file.
-3. **Session Backup**: Periodically back up your `./session` folder while the bot process is stopped.
-
----
-
-## 13. Contact Management & Cloud Address Book Sync
+## 12. Contact Management & Cloud Address Book Sync
 
 MFSAVANA Baileys provides first-class methods to save, edit, and delete contacts directly on the WhatsApp Cloud Address Book (App State Sync) and tools to generate and extract group contacts as vCard / VCF files.
 
-### 13.1 Save & Edit Contacts Directly
+### 12.1 Save & Edit Contacts Directly
 Save or update a contact so it appears in WhatsApp Web and connected devices:
 ```typescript
 // Save by string name (auto-splits firstName and fullName)
@@ -403,13 +388,13 @@ await sock.saveContact('6281234567890@s.whatsapp.net', {
 })
 ```
 
-### 13.2 Delete Contacts
+### 12.2 Delete Contacts
 Remove a contact from WhatsApp Cloud address book:
 ```typescript
 await sock.deleteContact('6281234567890@s.whatsapp.net')
 ```
 
-### 13.3 Send vCard Contact Cards
+### 12.3 Send vCard Contact Cards
 Send single or multiple WhatsApp contact cards:
 ```typescript
 await sock.sendContact('6281234567890@s.whatsapp.net', {
@@ -419,7 +404,7 @@ await sock.sendContact('6281234567890@s.whatsapp.net', {
 })
 ```
 
-### 13.4 Group Contact Extraction (VCF)
+### 12.4 Group Contact Extraction (VCF)
 Extract all group participants (excluding bot) into a downloadable `.vcf` file:
 ```typescript
 const { count, groupSubject, vcfBuffer, fileName, contactsList } = await sock.exportGroupContactsVCF(groupId, 'Client')
@@ -433,7 +418,7 @@ await sock.sendMessage(groupId, {
 })
 ```
 
-### 13.5 Namespace Helper (`sock.contact`)
+### 12.5 Namespace Helper (`sock.contact`)
 All methods are also available under the `sock.contact` namespace:
 ```typescript
 await sock.contact.save(jid, 'Nama')
@@ -442,3 +427,19 @@ await sock.contact.delete(jid)
 await sock.contact.send(targetJid, contactInfo)
 await sock.contact.exportGroupVCF(groupId, 'Member')
 ```
+
+---
+
+## 13. Production Deployment & Troubleshooting
+
+### 13.1 Deployment via PM2
+```bash
+npm install -g pm2
+pm2 start ecosystem.config.cjs
+pm2 logs mfsavana-baileys-prod
+```
+
+### 13.2 Critical Rules for Production
+1. **Single Instance**: Never run multiple cluster instances against the same `./session` folder. WhatsApp permits only one active WebSocket connection per session.
+2. **Environment Isolation**: Always set `NODE_ENV=production` and `LOG_LEVEL=silent` in your `.env` file.
+3. **Session Backup**: Periodically back up your `./session` folder while the bot process is stopped.
