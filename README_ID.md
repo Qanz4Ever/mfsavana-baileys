@@ -83,12 +83,49 @@ Baileys standar menyediakan fungsi dasar koneksi WebSocket dan enkripsi Signal. 
 - **Sistem Operasi**: Linux, macOS, atau Windows
 - **Sharp**: Sudah terpasang otomatis untuk pemrosesan gambar & stiker WebP
 
-### Instalasi
+### Opsi Instalasi
+
+#### Opsi 1: Melalui Terminal CLI (Direkomendasikan)
+Pasang menggunakan manajer paket pilihan Anda:
 ```bash
+# npm
 npm install mfsavana-baileys
+
+# pnpm
+pnpm add mfsavana-baileys
+
+# yarn
+yarn add mfsavana-baileys
+```
+
+#### Opsi 2: Melalui Berkas `package.json`
+Tambahkan `mfsavana-baileys` secara langsung ke dalam `dependencies` di file `package.json` proyek bot Anda:
+
+```json
+{
+  "name": "my-whatsapp-bot",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "mfsavana-baileys": "latest"
+  }
+}
+```
+> **Tips:** Penggunaan nilai `"latest"` memastikan bot Anda selalu mendapatkan pembaruan otomatis perbaikan protokol WhatsApp Web dan patch keamanan terkini. Anda juga dapat mengunci versi tertentu dengan `"^1.0.0"`.
+
+Setelah menyimpan berkas `package.json`, jalankan perintah pemasangan:
+```bash
+npm install
+# atau: pnpm install / yarn install
+```
+
+#### Opsi 3: Langsung dari Repositori GitHub
+```bash
+npm install github:Qanz4Ever/mfsavana-baileys
 ```
 
 ---
+
 
 ## Panduan Cepat (Quick Start)
 

@@ -83,18 +83,49 @@ While vanilla Baileys provides the core WebSocket and Signal protocol primitives
 - **OS**: Linux, macOS, or Windows (10/11 / Server)
 - **Dependencies**: Sharp (bundled in `package.json` for high-speed WebP image processing)
 
-### Install via NPM / Local Package
+### Installation Options
+
+#### Option 1: Via CLI (Recommended)
+Install using your preferred Node.js package manager:
 ```bash
-# In your bot project directory:
+# npm
 npm install mfsavana-baileys
+
+# pnpm
+pnpm add mfsavana-baileys
+
+# yarn
+yarn add mfsavana-baileys
 ```
 
-Or using Git directly:
+#### Option 2: Via `package.json`
+Add `mfsavana-baileys` directly to your bot's `package.json` dependencies:
+
+```json
+{
+  "name": "my-whatsapp-bot",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "mfsavana-baileys": "latest"
+  }
+}
+```
+> **Tip:** Setting `"latest"` ensures your bot always retrieves the latest WhatsApp Web binary protocol fixes and security patches. Alternatively, lock to a specific minor release using `"^1.0.0"`.
+
+After saving your `package.json`, run:
 ```bash
-npm install github:your-repo/mfsavana-baileys
+npm install
+# or: pnpm install / yarn install
+```
+
+#### Option 3: Direct Git Source (Bleeding-Edge)
+```bash
+npm install github:Qanz4Ever/mfsavana-baileys
 ```
 
 ---
+
 
 ## Quick Start
 
