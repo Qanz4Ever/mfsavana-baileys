@@ -1,0 +1,78 @@
+# =============================================================================
+# MFSAVANA Baileys - Git Ignore Configuration
+# =============================================================================
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# WhatsApp Auth Sessions & Keys (CRITICAL: NEVER COMMIT REAL SESSION)
+session/
+session*/
+session-prod/
+baileys_auth_info*
+auth_info*.json
+baileys_store*.json
+browser-messages.json
+browser-token.json
+decoded-ws.json
+messages*.json
+wa-logs*
+
+# Environment & Sensitive Config
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing & Coverage
+coverage/
+*.lcov
+.nyc_output
+
+# Build and Temp Caches
+dist/
+tmp/
+temp/
+*.tmp
+*.bak
+.turbo/
+.cache/
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE & Editor Specific
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+
+# Package Archives
+*.tgz
+*.tar.gz
