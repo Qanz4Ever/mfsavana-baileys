@@ -1,7 +1,7 @@
 {
   "name": "mfsavana-baileys",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Production-ready, resilient, and feature-complete WhatsApp Web API engine built on top of Baileys (@whiskeysockets/baileys v7.0.0-rc14).",
   "keywords": [
     "whatsapp",
